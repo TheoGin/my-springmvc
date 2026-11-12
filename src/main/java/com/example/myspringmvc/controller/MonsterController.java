@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 @Controller
 public class MonsterController {
 
-    @RequestMapping(value = "/listMonsters")
+    @RequestMapping(value = "/list/monsters")
     public void listMonsters(HttpServletRequest req, HttpServletResponse resp) {
         resp.setContentType("text/html;charset=utf-8");
         try {

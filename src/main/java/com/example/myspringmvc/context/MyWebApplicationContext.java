@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class MyWebApplicationContext {
     private ArrayList<String> classFullPathList = new ArrayList<>();
+    private ArrayList<MyHandler> handlerMappingUriList = new ArrayList<>();
 
     /* public MyWebApplicationContext(String basePackage) {
         System.out.println("MyWebApplicationContext init");
@@ -25,11 +26,17 @@ public class MyWebApplicationContext {
             scanPackage(pack);
         }
         System.out.println("classFullPathList = " + classFullPathList);
-    }
 
+        MyHandlerMapping myHandleMapping = new MyHandlerMapping();
+        myHandleMapping.initHandlerMapping(classFullPathList, handlerMappingUriList);
+        System.out.println("handlerMappingUriList = " + handlerMappingUriList);
+    }
 
     private void scanPackage(String pack) {
         URL url = MyWebApplicationContext.class.getResource("/" + pack.replace('.', '/'));
+        if (url == null) {
+            throw new RuntimeException("package not found: " + pack);
+        }
         File file = new File(url.getFile());
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
