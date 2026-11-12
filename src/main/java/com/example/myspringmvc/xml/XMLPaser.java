@@ -9,10 +9,10 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class XMLPaser {
-    public static String getBasePackage() {
+    public static String getBasePackage(String springMvcXml) {
 
         try {
-            InputStream resourceAsStream = XMLPaser.class.getClassLoader().getResourceAsStream("myspringmvc.xml");
+            InputStream resourceAsStream = XMLPaser.class.getClassLoader().getResourceAsStream(springMvcXml);
             // System.out.println("resourceAsStream = " + resourceAsStream);
             // URL url = XMLPaser.class.getResource("/myspringmvc.xml");
             // System.out.println(url);
