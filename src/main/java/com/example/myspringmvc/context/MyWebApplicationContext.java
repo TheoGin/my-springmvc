@@ -12,15 +12,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MyWebApplicationContext {
     private ArrayList<String> classFullPathList = new ArrayList<>();
     private ConcurrentHashMap<String, Object> ioc = new ConcurrentHashMap<>();
+    private String springMvcXmlFileName;
 
     /* public MyWebApplicationContext(String basePackage) {
         System.out.println("MyWebApplicationContext init");
         scanPackage(basePackage);
     } */
 
+    public MyWebApplicationContext() {
+    }
+
+    public MyWebApplicationContext(String springMvcXmlFileName) {
+        this.springMvcXmlFileName = springMvcXmlFileName;
+    }
+
     public void init() {
         System.out.println("MyWebApplicationContext init");
-        String  basePackage = XMLPaser.getBasePackage("myspringmvc.xml");
+        // String  basePackage = XMLPaser.getBasePackage("myspringmvc.xml");
+        String  basePackage = XMLPaser.getBasePackage(springMvcXmlFileName);
         // scanPackage(basePackage);
 
         // com.example.service.MonsterService, com.example.controller.MonsterController

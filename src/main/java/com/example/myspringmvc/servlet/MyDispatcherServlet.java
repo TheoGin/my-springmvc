@@ -25,7 +25,9 @@ public class MyDispatcherServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
 
-        myWebApplicationContext = new MyWebApplicationContext();
+        String contextConfigLocation = getServletConfig().getInitParameter("contextConfigLocation");
+        // myWebApplicationContext = new MyWebApplicationContext();
+        myWebApplicationContext = new MyWebApplicationContext(contextConfigLocation.split(":")[1]);
         myWebApplicationContext.init();
         // initHandlerMapping();
         MyHandlerMapping myHandleMapping = new MyHandlerMapping();
@@ -41,7 +43,7 @@ public class MyDispatcherServlet extends HttpServlet {
     }
 
     private void executeDispatch(HttpServletRequest req, HttpServletResponse resp) {
-        System.out.println("MyDispatcherServlet executeDispatch");
+        // System.out.println("MyDispatcherServlet executeDispatch");
 
         MyHandler myHandler = getMyHandler(req);
         try {
@@ -59,7 +61,7 @@ public class MyDispatcherServlet extends HttpServlet {
 
     private MyHandler getMyHandler(HttpServletRequest req) {
         String requestURI = req.getRequestURI();
-        System.out.println("requestURI = " + requestURI); // /my_springmvc/aaa
+        // System.out.println("requestURI = " + requestURI); // /my_springmvc/aaa
 
         String contextPath = req.getContextPath();
         if (contextPath.equals("/")) {
@@ -67,7 +69,7 @@ public class MyDispatcherServlet extends HttpServlet {
         }
 
         requestURI = requestURI.replace(contextPath, "");
-        System.out.println("after requestURI = " + requestURI);
+        // System.out.println("after requestURI = " + requestURI);
 
         for (MyHandler myHandler : handlerMappingUriList) {
             if (myHandler.getUri().equals(requestURI)) {

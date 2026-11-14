@@ -16,7 +16,7 @@ public class MonsterController {
         resp.setContentType("text/html;charset=utf-8");
         try {
             PrintWriter writer = resp.getWriter();
-            writer.write("妖怪列表");
+            writer.write("<h1>妖怪列表</h1>");
             writer.flush();
             writer.close();
         } catch (Exception e) {
