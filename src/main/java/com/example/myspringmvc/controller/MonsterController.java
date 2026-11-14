@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 @Controller
 public class MonsterController {
 
-    @AutoWired
+    @AutoWired(value = "monsterServ")
     private MonsterService monsterService;
 
 

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// @Service("monsterServ")
-@Service
+@Service("monsterServ")
+// @Service
 public class MonsterServiceImpl implements MonsterService {
     @Override
     public List<Monster> listMonsters() {
