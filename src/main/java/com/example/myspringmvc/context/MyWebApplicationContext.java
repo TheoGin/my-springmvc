@@ -51,6 +51,10 @@ public class MyWebApplicationContext {
     }
 
     private void executeAutowired() {
+        if (ioc.isEmpty()) {
+            return;
+        }
+
         for (Map.Entry<String, Object> entry : ioc.entrySet()) {
             Class<?> clazz = entry.getValue().getClass();
             for (Field field : clazz.getDeclaredFields()) {
@@ -60,6 +64,11 @@ public class MyWebApplicationContext {
                     if ("".equals(beanNameAutoWired)) {
                         beanNameAutoWired = StringUtils.uncapitalize(field.getType().getSimpleName());
                     }
+
+                    if (null == ioc.get(beanNameAutoWired)) {
+                        throw new RuntimeException("ioc容器中, 不存在你要装配的bean: " + beanNameAutoWired);
+                    }
+
                     field.setAccessible(true);
                     try {
                         field.set(entry.getValue(), ioc.get(beanNameAutoWired));
