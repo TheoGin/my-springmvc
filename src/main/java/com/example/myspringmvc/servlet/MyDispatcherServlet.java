@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -77,7 +78,15 @@ public class MyDispatcherServlet extends HttpServlet {
                     if (paramIndex != -1) {
                         args[paramIndex] = paramValues[0];
                     } else {
-                        // TODO: 处理参数不存在的情况
+                        // 处理参数不存在的情况
+                        List<String> paramNames = getParamNames(method);
+
+                        for (int i = 0; i < paramNames.size(); i++) {
+                            if (paramNames.get(i).equals(paramName)) {
+                                args[i] = paramValues[0];
+                                break;
+                            }
+                        }
                     }
                 }
 
@@ -87,6 +96,16 @@ public class MyDispatcherServlet extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<String> getParamNames(Method method) {
+        List<String> paramNames = new ArrayList<>();
+        Parameter[] methodParameters = method.getParameters();
+        for (Parameter methodParameter : methodParameters) {
+            paramNames.add(methodParameter.getName());
+        }
+        System.out.println("paramNames = " + paramNames); // 默认情况 paramNames = [arg0, arg1, arg2]，需要添加插件处理 -》paramNames = [req, resp, name]
+        return paramNames;
     }
 
     private int getParamIndex(Method method, String paramName) {

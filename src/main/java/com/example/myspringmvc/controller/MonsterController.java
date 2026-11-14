@@ -48,10 +48,12 @@ public class MonsterController {
     }
 
     @RequestMapping(value = "/list/find")
-    public void findMonstersByName(HttpServletRequest req, HttpServletResponse resp, @RequestParam(value = "name") String monsterName) {
+    // public void findMonstersByName(HttpServletRequest req, HttpServletResponse resp, @RequestParam(value = "name") String name) {
+    public void findMonstersByName(HttpServletRequest req, HttpServletResponse resp, String name) {
         resp.setContentType("text/html;charset=utf-8");
+        System.out.println("name = " + name);
 
-        List<Monster> monsters = monsterService.findMonstersByName(monsterName);
+        List<Monster> monsters = monsterService.findMonstersByName(name);
         try {
             PrintWriter writer = resp.getWriter();
             writer.write("<h1>通过名称查询妖怪列表</h1>");
