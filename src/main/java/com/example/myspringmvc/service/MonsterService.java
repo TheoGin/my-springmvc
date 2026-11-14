@@ -1,4 +1,9 @@
 package com.example.myspringmvc.service;
 
-public class MonsterService {
+import com.example.myspringmvc.entity.Monster;
+
+import java.util.List;
+
+public interface MonsterService {
+    public List<Monster> listMonsters();
 }

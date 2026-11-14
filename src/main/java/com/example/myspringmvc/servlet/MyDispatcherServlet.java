@@ -32,7 +32,7 @@ public class MyDispatcherServlet extends HttpServlet {
         // initHandlerMapping();
         MyHandlerMapping myHandleMapping = new MyHandlerMapping();
         myHandleMapping.initHandlerMapping(myWebApplicationContext, handlerMappingUriList);
-        System.out.println("handlerMappingUriList = " + handlerMappingUriList);
+        // System.out.println("handlerMappingUriList = " + handlerMappingUriList);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.myspringmvc.context;
 
 import com.example.myspringmvc.annotation.Controller;
+import com.example.myspringmvc.annotation.Service;
 import com.example.myspringmvc.xml.XMLPaser;
 import org.apache.commons.lang.StringUtils;
 
@@ -55,6 +56,18 @@ public class MyWebApplicationContext {
                         className = controllerAnnotation.value();
                     }
                     ioc.put(className, clazz.newInstance());
+                } else if (clazz.isAnnotationPresent(Service.class)) {
+                    Service serviceAnnotation = clazz.getDeclaredAnnotation(Service.class);
+                    Object newInstance = clazz.newInstance();
+                    if ("".equals(serviceAnnotation.value())) {
+                        Class<?>[] interfaces = clazz.getInterfaces();
+                        for (Class<?> anInterface : interfaces) {
+                            ioc.put(StringUtils.uncapitalize(anInterface.getSimpleName()), newInstance);
+                        }
+                        ioc.put(clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1), newInstance);
+                    } else {
+                        ioc.put(serviceAnnotation.value(), newInstance);
+                    }
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
