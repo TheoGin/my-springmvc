@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MyWebApplicationContext {
     private ArrayList<String> classFullPathList = new ArrayList<>();
     private ConcurrentHashMap<String, Object> ioc = new ConcurrentHashMap<>();
-    private String springMvcXmlFileName;
+    private String springMvcXmlFileName = "";
 
     /* public MyWebApplicationContext(String basePackage) {
         System.out.println("MyWebApplicationContext init");
