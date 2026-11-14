@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MyWebApplicationContext {
     private ArrayList<String> classFullPathList = new ArrayList<>();
     private ConcurrentHashMap<String, Object> ioc = new ConcurrentHashMap<>();
-    private ArrayList<MyHandler> handlerMappingUriList = new ArrayList<>();
 
     /* public MyWebApplicationContext(String basePackage) {
         System.out.println("MyWebApplicationContext init");
@@ -31,15 +30,12 @@ public class MyWebApplicationContext {
         }
         System.out.println("classFullPathList = " + classFullPathList);
 
-        initIoc();
+        executeInstaneToInitIoc();
         System.out.println("ioc = " + ioc);
 
-        MyHandlerMapping myHandleMapping = new MyHandlerMapping();
-        myHandleMapping.initHandlerMapping(classFullPathList, handlerMappingUriList);
-        System.out.println("handlerMappingUriList = " + handlerMappingUriList);
     }
 
-    private void initIoc() {
+    private void executeInstaneToInitIoc() {
         for (String classFullPath : classFullPathList) {
             try {
                 Class<?> clazz = Class.forName(classFullPath);
@@ -72,5 +68,9 @@ public class MyWebApplicationContext {
                 }
             }
         }
+    }
+
+    public ConcurrentHashMap<String, Object> getIoc() {
+        return ioc;
     }
 }

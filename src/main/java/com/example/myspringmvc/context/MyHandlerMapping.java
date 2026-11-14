@@ -4,38 +4,36 @@ import com.example.myspringmvc.annotation.Controller;
 import com.example.myspringmvc.annotation.RequestMapping;
 import org.apache.commons.lang.StringUtils;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MyHandlerMapping {
-    public void initHandlerMapping(ArrayList<String> classFullPathList, ArrayList<MyHandler> handlerMappingUriList) {
-        for (String classFullPath : classFullPathList) {
-            try {
-                Class<?> clazz = Class.forName(classFullPath);
+    public void initHandlerMapping(MyWebApplicationContext myWebApplicationContext, ArrayList<MyHandler> handlerMappingUriList) {
+        ConcurrentHashMap<String, Object> ioc = myWebApplicationContext.getIoc();
+        if (ioc.isEmpty()) {
+            throw new RuntimeException("spring ioc 容器为空");
+        }
+        try {
+            for (Map.Entry<String, Object> entry : ioc.entrySet()) {
+                Class<?> clazz = entry.getValue().getClass();
                 if (clazz.isAnnotationPresent(Controller.class)) {
-                    MyHandler myHandler = new MyHandler();
-                    /* String className = StringUtils.uncapitalize(clazz.getSimpleName());
-                    Controller controllerAnnotation = clazz.getDeclaredAnnotation(Controller.class);
-                    if (!controllerAnnotation.value().isEmpty()) {
-                        className = controllerAnnotation.value();
-                    }
-                    myHandler.setUri("/" + className); */
-                    myHandler.setController(clazz.newInstance());
-
-                    for (java.lang.reflect.Method method : clazz.getDeclaredMethods()) {
+                    for (Method method : clazz.getDeclaredMethods()) {
                         if (method.isAnnotationPresent(RequestMapping.class)) {
                             RequestMapping requestMappingAnnotation = method.getDeclaredAnnotation(RequestMapping.class);
                             String methodUri = requestMappingAnnotation.value();
+                            MyHandler myHandler = new MyHandler();
                             myHandler.setUri(methodUri);
+                            myHandler.setController(entry.getValue());
                             myHandler.setMethod(method);
+                            handlerMappingUriList.add(myHandler);
                         }
                     }
-
-                    handlerMappingUriList.add(myHandler);
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
     }
 }
