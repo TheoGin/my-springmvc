@@ -2,6 +2,7 @@ package com.example.myspringmvc.servlet;
 
 import com.example.myspringmvc.annotation.Controller;
 import com.example.myspringmvc.annotation.RequestMapping;
+import com.example.myspringmvc.annotation.RequestParam;
 import com.example.myspringmvc.context.MyHandler;
 import com.example.myspringmvc.context.MyHandlerMapping;
 import com.example.myspringmvc.context.MyWebApplicationContext;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +34,7 @@ public class MyDispatcherServlet extends HttpServlet {
         // initHandlerMapping();
         MyHandlerMapping myHandleMapping = new MyHandlerMapping();
         myHandleMapping.initHandlerMapping(myWebApplicationContext, handlerMappingUriList);
-        // System.out.println("handlerMappingUriList = " + handlerMappingUriList);
+        System.out.println("handlerMappingUriList = " + handlerMappingUriList);
     }
 
     @Override
@@ -67,12 +69,40 @@ public class MyDispatcherServlet extends HttpServlet {
                     }
                 }
 
+                Map<String, String[]> parameterMap = req.getParameterMap();
+                for (Map.Entry<String, String[]> stringEntry : parameterMap.entrySet()) {
+                    String paramName = stringEntry.getKey();
+                    String[] paramValues = stringEntry.getValue();
+                    int paramIndex = getParamIndex(method, paramName);
+                    if (paramIndex != -1) {
+                        args[paramIndex] = paramValues[0];
+                    } else {
+                        // TODO: 处理参数不存在的情况
+                    }
+                }
+
                 // method.invoke(controller, req, resp);
                 method.invoke(controller, args);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private int getParamIndex(Method method, String paramName) {
+        Parameter[] methodParameters = method.getParameters();
+        for (int i = 0; i < methodParameters.length; i++) {
+            Parameter methodParameter = methodParameters[i];
+            if (methodParameter.isAnnotationPresent(RequestParam.class)) {
+                RequestParam requestParamAnnotation = methodParameter.getAnnotation(RequestParam.class);
+                String requestParamValue = requestParamAnnotation.value();
+                if (requestParamValue.equals(paramName)) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
     }
 
     private MyHandler getMyHandler(HttpServletRequest req) {
