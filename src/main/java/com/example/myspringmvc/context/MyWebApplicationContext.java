@@ -1,13 +1,16 @@
 package com.example.myspringmvc.context;
 
+import com.example.myspringmvc.annotation.AutoWired;
 import com.example.myspringmvc.annotation.Controller;
 import com.example.myspringmvc.annotation.Service;
 import com.example.myspringmvc.xml.XMLPaser;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MyWebApplicationContext {
@@ -38,11 +41,35 @@ public class MyWebApplicationContext {
         for (String pack : packs) {
             scanPackage(pack);
         }
-        System.out.println("classFullPathList = " + classFullPathList);
+        // System.out.println("classFullPathList = " + classFullPathList);
 
         executeInstaneToInitIoc();
-        System.out.println("ioc = " + ioc);
+        System.out.println("注入容器后 ioc = " + ioc);
 
+        executeAutowired();
+        System.out.println("依赖注入后 ioc = " + ioc);
+    }
+
+    private void executeAutowired() {
+        for (Map.Entry<String, Object> entry : ioc.entrySet()) {
+            Class<?> clazz = entry.getValue().getClass();
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.isAnnotationPresent(AutoWired.class)) {
+                    AutoWired autoWiredAnnotation = field.getAnnotation(AutoWired.class);
+                    String beanNameAutoWired = autoWiredAnnotation.value();
+                    if ("".equals(beanNameAutoWired)) {
+                        beanNameAutoWired = StringUtils.uncapitalize(field.getType().getSimpleName());
+                    }
+                    field.setAccessible(true);
+                    try {
+                        field.set(entry.getValue(), ioc.get(beanNameAutoWired));
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+        }
     }
 
     private void executeInstaneToInitIoc() {
