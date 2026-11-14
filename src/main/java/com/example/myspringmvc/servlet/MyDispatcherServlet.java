@@ -51,7 +51,7 @@ public class MyDispatcherServlet extends HttpServlet {
                 Object controller = myHandler.getController();
                 Method method = myHandler.getMethod();
                 method.invoke(controller, req, resp);
-            } 
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -60,6 +60,15 @@ public class MyDispatcherServlet extends HttpServlet {
     private MyHandler getMyHandler(HttpServletRequest req) {
         String requestURI = req.getRequestURI();
         System.out.println("requestURI = " + requestURI); // /my_springmvc/aaa
+
+        String contextPath = req.getContextPath();
+        if (contextPath.equals("/")) {
+            contextPath = "";
+        }
+
+        requestURI = requestURI.replace(contextPath, "");
+        System.out.println("after requestURI = " + requestURI);
+
         for (MyHandler myHandler : handlerMappingUriList) {
             if (myHandler.getUri().equals(requestURI)) {
                 return myHandler;
