@@ -42,23 +42,30 @@ public class MyDispatcherServlet extends HttpServlet {
 
     private void executeDispatch(HttpServletRequest req, HttpServletResponse resp) {
         System.out.println("MyDispatcherServlet executeDispatch");
+
+        MyHandler myHandler = getMyHandler(req);
+        try {
+            if (myHandler == null) {
+                resp.getWriter().write("<h1>404 Not Found</h1>");
+            } else {
+                Object controller = myHandler.getController();
+                Method method = myHandler.getMethod();
+                method.invoke(controller, req, resp);
+            } 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private MyHandler getMyHandler(HttpServletRequest req) {
         String requestURI = req.getRequestURI();
         System.out.println("requestURI = " + requestURI); // /my_springmvc/aaa
         for (MyHandler myHandler : handlerMappingUriList) {
             if (myHandler.getUri().equals(requestURI)) {
-                System.out.println("myHandler = " + myHandler);
-                Object controller = myHandler.getController();
-                Method method = myHandler.getMethod();
-                try {
-                    method.invoke(controller, req, resp);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                } catch (InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
+                return myHandler;
             }
         }
+        return null;
     }
 
     @Override
