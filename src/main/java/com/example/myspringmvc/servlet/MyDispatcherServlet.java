@@ -52,7 +52,23 @@ public class MyDispatcherServlet extends HttpServlet {
             } else {
                 Object controller = myHandler.getController();
                 Method method = myHandler.getMethod();
-                method.invoke(controller, req, resp);
+
+                Class<?>[] parameterTypes = method.getParameterTypes();
+
+                Object[] args = new Object[parameterTypes.length];
+
+                for (int i = 0; i < parameterTypes.length; i++) {
+                    // if ("HttpServletRequest".equals(parameterTypes[i].getSimpleName())) {
+                    if (HttpServletRequest.class.isAssignableFrom(parameterTypes[i])) {
+                        args[i] = req;
+                    // } else if ("HttpServletResponse".equals(parameterTypes[i].getSimpleName())) {
+                    } else if (HttpServletResponse.class.isAssignableFrom(parameterTypes[i])) {
+                        args[i] = resp;
+                    }
+                }
+
+                // method.invoke(controller, req, resp);
+                method.invoke(controller, args);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
