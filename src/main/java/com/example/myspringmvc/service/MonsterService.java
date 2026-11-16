@@ -7,4 +7,6 @@ import java.util.List;
 public interface MonsterService {
     public List<Monster> listMonsters();
     public List<Monster> findMonstersByName(String name);
+
+    public boolean login(String name);
 }

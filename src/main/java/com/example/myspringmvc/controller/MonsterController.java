@@ -75,4 +75,18 @@ public class MonsterController {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping(value = "/monster/login")
+    public String login(HttpServletRequest req, HttpServletResponse resp, String name) {
+        boolean logined = monsterService.login(name);
+        req.setAttribute("monsterName", name);
+        System.out.println("name = " + name);
+        if (logined) {
+            // return "redirect:/login_ok.jsp";
+            // return "forward:/login_ok.jsp";
+            return "/login_ok.jsp";
+        } else {
+            return "forward:/login_error.jsp";
+        }
+    }
 }

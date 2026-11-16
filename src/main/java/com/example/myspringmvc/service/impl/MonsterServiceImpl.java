@@ -40,4 +40,12 @@ public class MonsterServiceImpl implements MonsterService {
 
         return resultMonsters;
     }
+
+    @Override
+    public boolean login(String name) {
+        if ("白骨精".equals(name)) {
+            return true;
+        }
+        return false;
+    }
 }

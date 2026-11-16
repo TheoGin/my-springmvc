@@ -70,6 +70,7 @@ public class MyDispatcherServlet extends HttpServlet {
                     }
                 }
 
+                req.setCharacterEncoding("UTF-8"); // 设置请求字符编码为 UTF-8
                 Map<String, String[]> parameterMap = req.getParameterMap();
                 for (Map.Entry<String, String[]> stringEntry : parameterMap.entrySet()) {
                     String paramName = stringEntry.getKey();
@@ -91,7 +92,24 @@ public class MyDispatcherServlet extends HttpServlet {
                 }
 
                 // method.invoke(controller, req, resp);
-                method.invoke(controller, args);
+                Object invokeResult = method.invoke(controller, args);
+                if (invokeResult instanceof String) {
+                    String strReturn = (String) invokeResult;
+                    if (strReturn.contains(":")) {
+                        String[] strParts = strReturn.split(":");
+                        String typeView = strParts[0];
+                        String nameView = strParts[1];
+                        if ("forward".equals(typeView)) {
+                            String forwardPath = nameView;
+                            req.getRequestDispatcher(forwardPath).forward(req, resp);
+                        } else if ("redirect".equals(typeView)) {
+                            String redirectPath = nameView;
+                            resp.sendRedirect(redirectPath);
+                        }
+                    } else {
+                        req.getRequestDispatcher(strReturn).forward(req, resp);
+                    }
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
