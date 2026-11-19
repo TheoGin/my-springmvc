@@ -7,12 +7,14 @@ import com.example.myspringmvc.context.MyHandler;
 import com.example.myspringmvc.context.MyHandlerMapping;
 import com.example.myspringmvc.context.MyWebApplicationContext;
 import com.example.myspringmvc.xml.XMLPaser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -108,6 +110,17 @@ public class MyDispatcherServlet extends HttpServlet {
                         }
                     } else {
                         req.getRequestDispatcher(strReturn).forward(req, resp);
+                    }
+                } else if (invokeResult instanceof ArrayList) {
+                    if (method.isAnnotationPresent(RequestMapping.class)) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String jsonResult = objectMapper.writeValueAsString(invokeResult);
+                        resp.setContentType("application/json;charset=utf-8");
+                        // resp.setContentType("text/html;charset=utf-8");
+                        PrintWriter writer = resp.getWriter();
+                        writer.write(jsonResult);
+                        writer.flush();
+                        writer.close();
                     }
                 }
             }

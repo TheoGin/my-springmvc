@@ -1,9 +1,6 @@
 package com.example.myspringmvc.controller;
 
-import com.example.myspringmvc.annotation.AutoWired;
-import com.example.myspringmvc.annotation.Controller;
-import com.example.myspringmvc.annotation.RequestMapping;
-import com.example.myspringmvc.annotation.RequestParam;
+import com.example.myspringmvc.annotation.*;
 import com.example.myspringmvc.entity.Monster;
 import com.example.myspringmvc.service.MonsterService;
 
@@ -20,6 +17,15 @@ public class MonsterController {
     @AutoWired
     private MonsterService monsterService;
 
+
+    @RequestMapping(value = "/list/monsters/json")
+    @ResponseBody
+    public List<Monster> listMonstersJson(HttpServletRequest req, HttpServletResponse resp) {
+
+        List<Monster> monsters = monsterService.listMonsters();
+
+        return monsters;
+    }
 
     @RequestMapping(value = "/list/monsters")
     public void listMonsters(HttpServletRequest req, HttpServletResponse resp) {
